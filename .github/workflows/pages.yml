@@ -1,0 +1,70 @@
+name: Build, verify and deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - 'migration/**'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Build
+        run: npm run build
+      - name: Source and asset gate
+        run: npm run test:smoke
+      - name: Functional and PWA gate
+        run: npm run test:functional
+      - name: Visual, dynamic-date, hotspot and DPR gates
+        run: npm run test:visual
+      - name: Upload visual/test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: check-in-timer-evidence
+          path: artifacts
+          if-no-files-found: warn
+      - name: Upload Pages artifact
+        if: success()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: verify
+    if: needs.verify.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: https://kayus24.github.io/check-in-timer/
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
