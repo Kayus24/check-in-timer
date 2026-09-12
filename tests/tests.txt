@@ -1,0 +1,52 @@
+# Tests
+
+## Test 1 - Timer-Navigation mit aktiver Persistenz [sanity]
+Viewport: mobile
+Covers: timer view, X navigation to map, timer continuity, shared startMs, primary/compat storage, single timer loop
+Description: Verifiziert, dass das X nur die Ansicht wechselt und der aktive Timer über die Kartenansicht weiterläuft.
+Steps:
+1. Öffne die Live-App ohne QA-Parameter und notiere Check-in-Daten, Timer und beide Storagewerte.
+2. Warte mindestens 2 Sekunden, drücke X und prüfe die Kartenansicht.
+3. Warte auf der Karte mindestens 5 Sekunden und öffne den Timer über Start.
+Expected: Die Kartenansicht erscheint; Primary/Compat und Startzeit bleiben unverändert; der Timer berücksichtigt die gesamte vergangene Zeit und läuft nicht beschleunigt.
+
+## Test 2 - Map, Profil und aktiver Check-in-Reentry
+Viewport: mobile
+Covers: map view, profile view, profile navigation, avatar crop/mask, Check-ins action, active check-in reentry, no navigation reset, elapsed continuity
+Description: Verifiziert den vollständigen Rückkehrpfad zum bereits laufenden Timer.
+Steps:
+1. Öffne einen aktiven Timer und notiere oldStartMs.
+2. Navigiere über X zu Standorte, über Profil zu Profil und drücke Check-ins.
+3. Öffne den aktiven Check-in und vergleiche Startdaten und elapsed time.
+Expected: Map und Profil zeigen sich als getrennte Views; Check-ins öffnet exakt denselben Timer-State, oldStartMs bleibt identisch und die während der Navigation vergangene Zeit ist enthalten.
+
+## Test 3 - Map-QR startet exakt einen neuen Check-in
+Viewport: mobile
+Covers: QR/check-in navigation including the visible top map QR hotspot, explicit startNewCheckin action, new timer, primary/compat storage replacement, duplicate-action lock
+Description: Verifiziert den einzigen expliziten Navigationspfad, der einen neuen Timer erzeugen darf.
+Steps:
+1. Navigiere vom Timer über X zur Kartenansicht und notiere oldStartMs.
+2. Drücke das sichtbare Check-in-/QR-Symbol genau einmal.
+3. Prüfe Timer View, sichtbare Startzeit, elapsed timer und Primary/Compat.
+Expected: Timer View erscheint; newStartMs ist größer als oldStartMs, der Timer beginnt bei höchstens einer Sekunde, beide Storagewerte entsprechen newStartMs und ein Einzelklick erzeugt genau einen neuen Check-in.
+
+## Test 4 - Navigation, Reload und definierter No-Active-Pfad
+Viewport: mobile
+Covers: reload on map, reload on profile, browser hash/history navigation, no active check-in path, no duplicate intervals, view mount without reset
+Description: Verifiziert, dass View-Mounts und Reloads den gemeinsamen Timer-State nicht zerstören.
+Steps:
+1. Öffne Timer, navigiere zu Map und lade neu; öffne danach Profil und Check-ins.
+2. Navigiere mehrfach zwischen Timer, Map, Profil und Check-ins sowie mit Browser-Back soweit verfügbar.
+3. Öffne für den No-Active-Test den definierten Zustand mit ?noActive=1 und wähle Profil → Check-ins.
+Expected: Kein View-Mount erzeugt einen neuen Timer; Reload und History bewahren den aktiven State; bei leerem Zustand startet Check-ins keinen künstlichen Timer.
+
+## Test 5 - Timer-Regression, Video, PWA und Cache
+Viewport: mobile
+Covers: original-derived/live DOM glyph line, visible digit updates, 12 clean-video timestamps, timer loop, long-press reset guardrails including outside-pointer cancellation, local day reset, QA isolation, manifest, service worker, cache version, no 404/errors
+Description: Verifiziert die bestehende Timer-, Video- und PWA-Basis nach der Navigationserweiterung.
+Steps:
+1. Prüfe die identischen QA-Strings 00:00:07, 00:00:11, 00:00:18, 00:00:27 sowie die Übergänge 09→10, 59→01:00 und 09:59→10:00.
+2. Prüfe das bereinigte Video bei mindestens 12 Zeitpunkten, nahe dem Loop-Ende sowie Manifest, Icons, SW und Glyphenmodul.
+3. Öffne QA, prüfe QA-Isolation und kontrolliere den Live-Diagnoseblock auf Build-, Cache-, Video-, View-, Bounds- und Fehlerwerte.
+Expected: Die gemeinsame Timerzeile bleibt visuell/motorisch stabil; das Video loopt; QA verändert Production nicht; der neue Build-/Cache-Stand ist konsistent und die Fehlerlisten bleiben leer.
+

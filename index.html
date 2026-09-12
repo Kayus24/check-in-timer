@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#181d23">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-touch-icon" content="./icon-192.svg">
+  <meta name="checkin-build" content="appdeploy-v77-github-pages-v1">
+  <title>Check-in Timer</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon-192.svg" sizes="192x192">
+  <link rel="apple-touch-icon" href="./icon-192.svg">
+  <link rel="stylesheet" href="./src/styles.css?build=appdeploy-v77-github-pages-v1">
+</head>
+<body data-view="timer">
+  <main id="viewport" aria-label="Check-in Timer">
+    <div id="stage">
+      <section id="timerView" class="appView" aria-label="Aktiver Check-in">
+        <video id="backgroundVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+          <source src="./resources/background-clean-v2.mp4?asset=background-clean-v2-v77" type="video/mp4">
+        </video>
+        <button id="timerExit" class="topAction" type="button" aria-label="Zur Kartenansicht">×</button>
+        <div id="dynamicCheckin" aria-label="Check-in-Zeitpunkt und Timer">
+          <span id="checkinLabel">Check-in:</span><span class="gap" aria-hidden="true"> </span><span id="startDate"></span><span class="gap" aria-hidden="true"> </span><span id="startTime"></span><span class="sep"> • </span><span id="elapsed">00:00:00</span><canvas id="elapsedRaster" aria-hidden="true"></canvas>
+        </div>
+      </section>
+
+      <section id="mapView" class="appView viewHidden" aria-label="Standorte" aria-hidden="true">
+        <img id="mapReferenceImage" class="referenceImage mapReferenceImage" src="./resources/map-reference.jpg" alt="" aria-hidden="true">
+        <div class="mapFallback" aria-hidden="true">
+          <svg class="mapArt" viewBox="0 0 1222 2688" preserveAspectRatio="none">
+            <rect width="1222" height="2688" fill="#20385f"/>
+            <g fill="none" stroke-linecap="round">
+              <path d="M-80 250 L1250 520 M-120 620 L1270 900 M-120 1010 L1300 1300 M-120 1410 L1300 1710 M-80 1830 L1300 2140 M-80 2230 L1300 2540" stroke="#385b8f" stroke-width="12"/>
+              <path d="M120 0 L-10 2688 M420 -80 L270 2688 M780 -90 L640 2688 M1090 -80 L930 2688" stroke="#284a7b" stroke-width="16"/>
+              <path d="M1040 -40 L810 940 L760 1650 L900 2720" stroke="#2f7a77" stroke-width="38"/>
+              <path d="M1040 -40 L810 940 L760 1650 L900 2720" stroke="#3e988e" stroke-width="13"/>
+              <path d="M0 730 L1222 1040 M250 0 L0 2688 M560 0 L420 2688" stroke="#5d82b5" stroke-width="4" opacity=".85"/>
+            </g>
+            <g fill="#a8bfdc" font-family="Arial, sans-serif" font-size="34" opacity=".82">
+              <text x="88" y="230" font-size="44" fill="#9bc6b2" letter-spacing="2">KISSINGENVIERTEL</text>
+              <text x="640" y="220" transform="rotate(-8 640 220)">Kissingenstraße</text>
+              <text x="345" y="730" transform="rotate(78 345 730)">Neumannstraße</text>
+              <text x="108" y="1160" transform="rotate(12 108 1160)">Bösebrücke-Straße</text>
+              <text x="755" y="1540" transform="rotate(78 755 1540)">Eschenraben</text>
+              <text x="560" y="1700">VinetaStraße</text>
+              <text x="740" y="980">Treskowallee</text>
+              <text x="930" y="1130">JYSK Pankow</text>
+              <text x="50" y="2110" transform="rotate(90 50 2110)">Trelleborger Str.</text>
+            </g>
+          </svg><svg class="mapReferenceRoads" viewBox="0 0 1222 2688" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="#2c4d80" stroke-width="10" stroke-linecap="round" opacity=".95"><path d="M-80 380L1240 670M-100 790L1250 1070M-100 1180L1260 1450M-100 1580L1260 1870M-100 1980L1260 2260M-100 2370L1260 2630"/><path d="M180 -80L70 2700M330 -80L235 2700M540 -80L460 2700M690 -80L600 2700M875 -80L790 2700M1040 -80L950 2700M1170 -80L1080 2700"/></g><g fill="none" stroke="#5074a4" stroke-width="4" stroke-linecap="round" opacity=".8"><path d="M-50 520L1210 790M-30 955L1240 1225M-40 1360L1240 1640M-50 1760L1250 2040M-40 2180L1260 2460"/><path d="M80 80L-30 2660M250 0L150 2688M455 0L355 2688M610 0L515 2688M785 0L690 2688M965 0L870 2688M1110 0L1020 2688"/></g><g fill="none" stroke="#6e91ba" stroke-width="3" opacity=".75"><path d="M0 640L1222 920M0 1320L1222 1600M0 1880L1222 2160M135 0L25 2688M385 0L280 2688M735 0L630 2688M1010 0L910 2688"/></g><g fill="#f6f9ff" stroke="#dbe6f5" stroke-width="5"><path d="M1015 1005c0-25 20-45 45-45s45 20 45 45c0 36-45 82-45 82s-45-46-45-82Z"/><path d="M510 1185c0-22 18-40 40-40s40 18 40 40c0 32-40 72-40 72s-40-40-40-72Z"/><path d="M1070 1760c0-22 18-40 40-40s40 18 40 40c0 32-40 72-40 72s-40-40-40-72Z"/></g><g fill="#6b778a"><circle cx="1060" cy="1005" r="15"/><circle cx="550" cy="1185" r="13"/><circle cx="1110" cy="1760" r="13"/></g></svg>
+          <div class="mapQuickAction mapQrAction"><span>▦</span></div>
+          <div class="mapQuickAction mapHelpAction"><span>?</span></div>
+          <div class="mapPoi poiGym"><span>▣</span></div>
+          <div class="mapPoi poiRestaurant poiRestaurantTop"><span>♟</span></div>
+          <div class="mapPoi poiRestaurant poiRestaurantLeft"><span>♟</span></div>
+          <div class="mapPoi poiRestaurant poiRestaurantRight"><span>♟</span></div>
+          <div class="mapPoi poiParking"><span>P</span></div>
+          <div class="mapPoi poiShop"><span>▰</span></div>
+          <div class="mapPoi poiChurch"><span>✚</span></div>
+          <div class="mapPoi poiUser"><span>•</span></div>
+          <div class="mapPoi poiMcDonalds"><span>M</span></div>
+        </div>
+        <button id="mapQuickQrButton" class="mapQuickQrButton" type="button" aria-label="Neuen Check-in über QR starten"></button>
+        <button id="mapExit" class="topAction" type="button" aria-label="Zurück zum aktiven Timer">×</button>
+        <div class="mapSheet">
+          <h1>Standorte in deiner Nähe</h1>
+          <article class="locationCard">
+            <strong>Tao Twerk @Zentrum Uppsala</strong>
+            <span>Innsalser Straße 6 · 529 m</span>
+            <button type="button" aria-label="Standort auf Karte öffnen">⌖</button>
+          </article>
+        </div>
+        <nav class="bottomNav" aria-label="Hauptnavigation">
+          <button id="mapStartNav" type="button"><span class="navIcon">⌂</span><span>Start</span></button>
+          <button id="mapLocationNav" class="active" type="button"><span class="navIcon">●</span><span>Standorte</span></button>
+          <button id="mapCoursesNav" type="button"><span class="navIcon">▥</span><span>Kurse</span></button>
+          <button id="mapQrButton" type="button" aria-label="Neuen Check-in starten"><span class="navIcon qrIcon">⌗</span><span>Check-in</span></button>
+          <button id="mapProfileButton" type="button"><span class="navIcon">●</span><span>Profil</span></button>
+        </nav>
+      </section>
+
+      <section id="profileView" class="appView viewHidden" aria-label="Profil" aria-hidden="true">
+        <img id="profileReferenceImage" class="referenceImage profileReferenceImage" src="./resources/profile-reference.jpg" alt="" aria-hidden="true">
+        <div class="profileFallback" aria-hidden="true">
+          <div class="profileHeader"><span class="giftIcon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 19h32v22H8zM5 13h38v8H5zM24 13v28M24 13c-8 0-13-3-13-8 0-4 4-5 7-3 4 2 6 7 6 11Zm0 0c8 0 13-3 13-8 0-4-4-5-7-3-4 2-6 7-6 11Z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/></svg></span><strong>Jetzt empfehlen</strong><span class="settingsIcon" aria-hidden="true">⚙</span></div>
+          <div class="avatarFallback"><div class="avatarPhotoWindow"><video id="profilePhotoVideo" class="profilePhotoVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true"><source src="./resources/background-clean-v2.mp4?asset=background-clean-v2-v77" type="video/mp4"></video></div><span class="profileBadge">Classic</span></div>
+          <div class="profileName">Maximilian Kullmann</div>
+          <div class="profileNumber">963476873 <span class="copyIcon" aria-hidden="true"></span></div>
+          <div class="profileLinks"><span><i class="heartIcon" aria-hidden="true">♡</i><small>Favoriten</small></span><span><i class="roundCheckIcon" aria-hidden="true">✓</i><small>Check-ins</small></span></div>
+          <div class="emptyIllustration" aria-hidden="true"><svg viewBox="0 0 820 430" preserveAspectRatio="xMidYMid meet"><path d="M140 170C192 48 362 28 512 70c138 38 208 156 142 278-58 106-280 74-420 22C99 330 82 240 140 170Z" fill="#91bdf5"/><g fill="none" stroke="#0e1116" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M335 151h190M260 269h225M390 120v60M316 238v62"/><path d="M302 112c-10 20-9 75 4 96M548 112c12 20 12 75-1 96M216 235c-10 20-8 76 7 98M486 235c11 19 10 74-2 97"/><path d="M277 178h36M540 178h33M190 333h176M469 333h178"/></g><g fill="#fff" stroke="#0e1116" stroke-width="10"><ellipse cx="290" cy="158" rx="31" ry="53"/><ellipse cx="566" cy="158" rx="31" ry="53"/><ellipse cx="246" cy="283" rx="31" ry="55"/><ellipse cx="520" cy="283" rx="31" ry="55"/></g></svg></div>
+          <div class="emptyState"><strong>Keine bevorstehenden Kurse</strong><span>Sobald du Kurse gebucht hast, findest du hier eine Übersicht über alle deine Aktivitäten.</span></div>
+        </div>
+        <span id="profileDynamicPlanDate" aria-hidden="true"></span>
+        <button id="profileExit" class="topAction" type="button" aria-label="Zur Kartenansicht">×</button>
+        <button id="profileCheckins" class="profileCheckinsAction" type="button" aria-label="Aktiven Check-in öffnen">
+          <span class="checkIcon">✓</span><span>Check-ins</span><small id="profileTimerSummary">Aktiver Timer</small>
+        </button>
+        <nav class="bottomNav" aria-label="Hauptnavigation">
+          <button id="profileStartNav" type="button"><span class="navIcon">⌂</span><span>Start</span></button>
+          <button id="profileLocationNav" type="button"><span class="navIcon">●</span><span>Standorte</span></button>
+          <button id="profileCoursesNav" type="button"><span class="navIcon">▥</span><span>Kurse</span></button>
+          <button id="profileCheckinNav" type="button"><span class="navIcon qrIcon">⌗</span><span>Check-in</span></button>
+          <button id="profileProfileNav" class="active" type="button"><span class="navIcon">●</span><span>Profil</span></button>
+        </nav>
+      </section>
+
+      <section id="checkinsView" class="appView viewHidden" aria-label="Check-ins" aria-hidden="true">
+        <div class="checkinsPanel">
+          <button id="checkinsBack" class="plainBack" type="button" aria-label="Zum aktiven Timer zurück">‹</button>
+          <h1>Check-ins</h1>
+          <button id="activeCheckinCard" class="activeCheckinCard" type="button">
+            <span class="checkIcon">✓</span>
+            <span><strong>Aktiver Check-in</strong><small id="checkinsTimerSummary"></small></span>
+            <span class="cardArrow">›</span>
+          </button>
+          <div id="noActiveCheckin" class="noActiveCheckin" hidden>Kein aktiver Check-in vorhanden.<br>Starte einen neuen Check-in über die Kartenansicht.</div>
+        </div>
+        <nav class="bottomNav" aria-label="Hauptnavigation">
+          <button id="checkinsStartNav" type="button"><span class="navIcon">⌂</span><span>Start</span></button>
+          <button id="checkinsLocationNav" type="button"><span class="navIcon">●</span><span>Standorte</span></button>
+          <button id="checkinsCoursesNav" type="button"><span class="navIcon">▥</span><span>Kurse</span></button>
+          <button id="checkinsCheckinNav" class="active" type="button"><span class="navIcon qrIcon">⌗</span><span>Check-in</span></button>
+          <button id="checkinsProfileNav" type="button"><span class="navIcon">●</span><span>Profil</span></button>
+        </nav>
+      </section>
+
+      <pre id="diagnostics" aria-hidden="true"></pre>
+    </div>
+  </main>
+  <script type="module" src="./src/main.ts?build=appdeploy-v77-github-pages-v1"></script>
+</body>
+</html>
