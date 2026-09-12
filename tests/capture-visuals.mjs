@@ -112,6 +112,40 @@ function writeDiff(reference, actual, filePath) {
   fs.writeFileSync(filePath, PNG.sync.write(diff));
 }
 
+function compareDynamicMask(reference, actual, box) {
+  if (reference.width !== actual.width || reference.height !== actual.height) {
+    throw new Error('Dynamic screenshot dimension mismatch');
+  }
+  const left = Math.max(0, Math.floor(box.x));
+  const top = Math.max(0, Math.floor(box.y));
+  const right = Math.min(actual.width, Math.ceil(box.x + box.width));
+  const bottom = Math.min(actual.height, Math.ceil(box.y + box.height));
+  let changedPixels = 0;
+  let changedOutsideMask = 0;
+  for (let y = 0; y < actual.height; y += 1) {
+    for (let x = 0; x < actual.width; x += 1) {
+      const offset = (y * actual.width + x) * 4;
+      const delta = Math.max(
+        Math.abs(reference.data[offset] - actual.data[offset]),
+        Math.abs(reference.data[offset + 1] - actual.data[offset + 1]),
+        Math.abs(reference.data[offset + 2] - actual.data[offset + 2]),
+      );
+      if (delta <= 10) continue;
+      changedPixels += 1;
+      if (x < left || x >= right || y < top || y >= bottom) changedOutsideMask += 1;
+    }
+  }
+  const totalPixels = actual.width * actual.height;
+  return {
+    mask: { left, top, right, bottom, width: right - left, height: bottom - top },
+    changedPixels,
+    changedOutsideMask,
+    changedPercent: changedPixels / totalPixels * 100,
+    changedOutsideMaskPercent: changedOutsideMask / totalPixels * 100,
+    pass: changedOutsideMask === 0,
+  };
+}
+
 async function main() {
   fs.mkdirSync(visualDir, { recursive: true });
   fs.mkdirSync(testDir, { recursive: true });
@@ -164,10 +198,15 @@ async function main() {
     await dynamicPage.goto(baseURL + '/?qa=1&month=Sep&day=10&hour=10&minute=20&seconds=0#profile', { waitUntil: 'domcontentloaded' });
     await dynamicPage.waitForFunction(() => document.body.dataset.view === 'profile');
     await dynamicPage.waitForTimeout(500);
-    await dynamicPage.screenshot({ path: path.join(visualDir, 'profile-dynamic-thu.png'), animations: 'disabled' });
+    const dynamicPath = path.join(visualDir, 'profile-dynamic-thu.png');
+    const dynamicDiffPath = path.join(visualDir, 'profile-dynamic-diff.png');
+    await dynamicPage.screenshot({ path: dynamicPath, animations: 'disabled' });
     const dateText = await dynamicPage.locator('#profileDynamicPlanDate').textContent();
     const dateBox = await dynamicPage.locator('#profileDynamicPlanDate').boundingBox();
-    metrics.dynamicDate = { dateText, dateBox, expectedReference: 'Wed, Sep 9 - 00:00-23:59', expectedDynamic: 'Thu, Sep 10 - 00:00-23:59' };
+    const dynamic = readImage(dynamicPath);
+    writeDiff(readImage(path.join(visualDir, 'profile-actual.png')), dynamic, dynamicDiffPath);
+    const maskResult = compareDynamicMask(readImage(path.join(visualDir, 'profile-actual.png')), dynamic, dateBox);
+    metrics.dynamicDate = { dateText, dateBox, actual: dynamicPath, diff: dynamicDiffPath, expectedReference: 'Wed, Sep 9 - 00:00-23:59', expectedDynamic: 'Thu, Sep 10 - 00:00-23:59', ...maskResult };
     await dynamicContext.close();
 
     const crossViewport = [];
@@ -215,6 +254,7 @@ async function main() {
     metrics.profile.ssim >= 0.995 &&
     metrics.profile.diffPercent <= 0.5 &&
     metrics.dynamicDate.dateText === metrics.dynamicDate.expectedDynamic &&
+    metrics.dynamicDate.pass &&
     metrics.crossViewport.every((item) => item.pass),
   );
   fs.writeFileSync(path.join(testDir, 'visual-metrics.json'), JSON.stringify(metrics, null, 2) + '\n');
