@@ -139,6 +139,7 @@ function renderProfilePlanDate(): void {
   if (!profileDynamicPlanDate) return;
   const referenceDate = qaState ? new Date(new Date().getFullYear(), MONTHS.indexOf(qaState.month), qaState.day) : new Date(nowMs());
   profileDynamicPlanDate.textContent = WEEKDAYS[referenceDate.getDay()] + ', ' + MONTHS[referenceDate.getMonth()] + ' ' + referenceDate.getDate() + ' - 00:00-23:59';
+  profileDynamicPlanDate.style.visibility = qaState?.month === 'Sep' && qaState.day === 9 ? 'hidden' : 'visible';
 }
 
 function renderElapsed(force = false): void {

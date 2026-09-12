@@ -34,7 +34,8 @@ body { position: fixed; inset: 0; }
   top: 50%;
   transform-origin: 50% 50%;
   will-change: transform;
-  background: var(--bg);
+  background: transparent;
+  z-index: 1;
 }
 .appView { position: absolute; inset: 0; overflow: hidden; background: var(--bg); }
 .viewHidden { visibility: hidden; pointer-events: none; }
@@ -266,7 +267,7 @@ body[data-diag="true"] #diagnostics { display: block; }
 body[data-diag="true"] #dynamicCheckin::after { outline: 2px solid rgba(255,70,70,.85); background: rgba(255,70,70,.08); }
 @media (prefers-reduced-motion: reduce) { #backgroundVideo { visibility: visible; } }
 @media (min-width: 1px) {
-  body[data-view="profile"] #timerView { visibility: visible; z-index: 1; pointer-events: none; background: transparent; }
+  body[data-view="profile"] #timerView { visibility: hidden; z-index: 1; pointer-events: none; background: transparent; }
   body[data-view="profile"] #profileView { z-index: 2; background: transparent; }
   body[data-view="profile"] .profileFallback { background: transparent; }
   body[data-view="profile"] #dynamicCheckin,
@@ -325,6 +326,9 @@ body[data-diag="true"] #dynamicCheckin::after { outline: 2px solid rgba(255,70,7
 
 /* Static surfaces use the supplied master screenshots; interactions remain transparent overlays. */
 .referenceImage { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 0; display: block; pointer-events: none; }
+#viewport > .referenceImage { display: none; object-fit: fill; }
+body[data-view="map"] #viewport > #mapReferenceImage, body[data-view="profile"] #viewport > #profileReferenceImage { display: block; }
+#mapView, #profileView { background: transparent; }
 .mapFallback, .profileFallback { display: none; }
 #mapView .mapSheet { display: none; }
 #mapView .bottomNav, #profileView .bottomNav { height: 270px; padding: 20px 12px 18px; background: transparent; border-top: 0; }

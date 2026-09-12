@@ -55,7 +55,7 @@ jobs:
 
   deploy:
     needs: verify
-    if: needs.verify.result == 'success'
+    if: needs.verify.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       pages: write

@@ -16,6 +16,8 @@
 </head>
 <body data-view="timer">
   <main id="viewport" aria-label="Check-in Timer">
+    <img id="mapReferenceImage" class="referenceImage mapReferenceImage" src="./resources/map-reference.jpg" alt="" aria-hidden="true">
+    <img id="profileReferenceImage" class="referenceImage profileReferenceImage" src="./resources/profile-reference.jpg" alt="" aria-hidden="true">
     <div id="stage">
       <section id="timerView" class="appView" aria-label="Aktiver Check-in">
         <video id="backgroundVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
@@ -28,7 +30,6 @@
       </section>
 
       <section id="mapView" class="appView viewHidden" aria-label="Standorte" aria-hidden="true">
-        <img id="mapReferenceImage" class="referenceImage mapReferenceImage" src="./resources/map-reference.jpg" alt="" aria-hidden="true">
         <div class="mapFallback" aria-hidden="true">
           <svg class="mapArt" viewBox="0 0 1222 2688" preserveAspectRatio="none">
             <rect width="1222" height="2688" fill="#20385f"/>
@@ -83,7 +84,6 @@
       </section>
 
       <section id="profileView" class="appView viewHidden" aria-label="Profil" aria-hidden="true">
-        <img id="profileReferenceImage" class="referenceImage profileReferenceImage" src="./resources/profile-reference.jpg" alt="" aria-hidden="true">
         <div class="profileFallback" aria-hidden="true">
           <div class="profileHeader"><span class="giftIcon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 19h32v22H8zM5 13h38v8H5zM24 13v28M24 13c-8 0-13-3-13-8 0-4 4-5 7-3 4 2 6 7 6 11Zm0 0c8 0 13-3 13-8 0-4-4-5-7-3-4 2-6 7-6 11Z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/></svg></span><strong>Jetzt empfehlen</strong><span class="settingsIcon" aria-hidden="true">⚙</span></div>
           <div class="avatarFallback"><div class="avatarPhotoWindow"><video id="profilePhotoVideo" class="profilePhotoVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true"><source src="./resources/background-clean-v2.mp4?asset=background-clean-v2-v77" type="video/mp4"></video></div><span class="profileBadge">Classic</span></div>
