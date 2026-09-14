@@ -1,8 +1,8 @@
 import './styles.css';
 import { TIMER_GLYPHS } from './timer-glyphs';
 
-const BUILD_ID = 'appdeploy-v77-github-pages-v1';
-const SW_CACHE_VERSION = 'checkin-timer-cache-v1-appdeploy-v77';
+const BUILD_ID = 'appdeploy-v77-github-pages-v2';
+const SW_CACHE_VERSION = 'checkin-timer-cache-v2-appdeploy-v77-fullscreen';
 const VIDEO_ASSET_VERSION = 'background-clean-v2-v77';
 const STAGE_W = 1222;
 const STAGE_H = 2688;

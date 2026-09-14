@@ -7,19 +7,19 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-touch-icon" content="./icon-192.svg">
-  <meta name="checkin-build" content="appdeploy-v77-github-pages-v1">
+  <meta name="checkin-build" content="appdeploy-v77-github-pages-v2">
   <title>Check-in Timer</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon-192.svg" sizes="192x192">
   <link rel="apple-touch-icon" href="./icon-192.svg">
-  <link rel="stylesheet" href="./src/styles.css?build=appdeploy-v77-github-pages-v1">
+  <link rel="stylesheet" href="./src/styles.css?build=appdeploy-v77-github-pages-v2">
 </head>
 <body data-view="timer">
   <main id="viewport" aria-label="Check-in Timer">
     <img id="mapReferenceImage" class="referenceImage mapReferenceImage" src="./resources/map-reference.jpg" alt="" aria-hidden="true">
     <img id="profileReferenceImage" class="referenceImage profileReferenceImage" src="./resources/profile-reference.jpg" alt="" aria-hidden="true">
     <div id="stage">
-      <section id="timerView" class="appView" aria-label="Aktiver Check-in">
+      <section id="timerView" class="appView" aria-label="Aktiver Check-in" aria-hidden="false">
         <video id="backgroundVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
           <source src="./resources/background-clean-v2.mp4?asset=background-clean-v2-v77" type="video/mp4">
         </video>
@@ -130,6 +130,6 @@
       <pre id="diagnostics" aria-hidden="true"></pre>
     </div>
   </main>
-  <script type="module" src="./src/main.ts?build=appdeploy-v77-github-pages-v1"></script>
+  <script type="module" src="./src/main.ts?build=appdeploy-v77-github-pages-v2"></script>
 </body>
 </html>
