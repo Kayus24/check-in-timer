@@ -1,5 +1,5 @@
-const BUILD_ID = 'appdeploy-v77-github-pages-v1';
-const SW_CACHE_VERSION = 'checkin-timer-cache-v1-appdeploy-v77';
+const BUILD_ID = 'appdeploy-v77-github-pages-v2';
+const SW_CACHE_VERSION = 'checkin-timer-cache-v2-appdeploy-v77-fullscreen';
 const VIDEO_ASSET_VERSION = 'background-clean-v2-v77';
 const CACHE = SW_CACHE_VERSION;
 const VIDEO_URL = './resources/background-clean-v2.mp4?asset=' + VIDEO_ASSET_VERSION;
