@@ -18,3 +18,9 @@ Inherit: `Kayus24/vibe-shared-knowledge/tool-routing/BASELINE.md`.
 ## Gates
 - Preserve the AppDeploy v77 behavioral baseline unless the task explicitly changes behavior.
 - Run build, smoke, functional and visual gates appropriate to the touched area.
+## Directory routing
+- `src/**`: editable application source.
+- `tests/**`: functional/visual regression evidence and acceptance checks.
+- `public/**`: static runtime assets.
+- `dist/**`: generated build output; never use as patch basis.
+- Root build/config files: Vite/TypeScript/Tailwind/test configuration; change only when the task requires toolchain behavior.
